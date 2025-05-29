@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Spinner } from '@/components/shared/Spinner';
+import { Button } from '@/components/ui/button'; // Added import
 
 export default function SignupPage() {
   const { user, loading } = useAuth();

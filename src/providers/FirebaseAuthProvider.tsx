@@ -1,7 +1,8 @@
+
 'use client';
 
 import type { User } from 'firebase/auth';
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type AuthError } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
@@ -33,7 +34,10 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
       // Auth state change will be handled by onAuthStateChanged
       // router.push(PATHS.DASHBOARD); // Consider if navigation should happen here or in page
     } catch (error) {
-      console.error("Error signing in with Google:", error);
+      const authError = error as AuthError;
+      console.error("Error signing in with Google:", authError);
+      console.error("Google Sign-In Error Code:", authError.code);
+      console.error("Google Sign-In Error Message:", authError.message);
       // Handle error (e.g., show toast)
     } finally {
       // setLoading(false); // onAuthStateChanged will set loading to false
@@ -47,7 +51,10 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
       router.push(PATHS.LOGIN);
     } catch (error)
     {
-      console.error("Error signing out:", error);
+      const authError = error as AuthError;
+      console.error("Error signing out:", authError);
+      console.error("Sign-Out Error Code:", authError.code);
+      console.error("Sign-Out Error Message:", authError.message);
       // Handle error
     } finally {
       // setLoading(false); // onAuthStateChanged will set loading to false

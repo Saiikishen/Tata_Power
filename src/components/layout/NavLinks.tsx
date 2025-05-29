@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, LineChart, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutDashboard, LineChart, Settings as SettingsIcon, HardDriveUpload } from 'lucide-react'; // Added HardDriveUpload
 import { PATHS } from '@/lib/constants';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { href: PATHS.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
   { href: PATHS.HISTORY, label: 'History', icon: LineChart },
+  { href: PATHS.DEVICE_FILES, label: 'Device Files', icon: HardDriveUpload }, // Added Device Files link
   { href: PATHS.SETTINGS, label: 'Settings', icon: SettingsIcon },
 ];
 

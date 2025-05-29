@@ -1,3 +1,4 @@
+
 export const PATHS = {
   HOME: '/',
   LOGIN: '/login',
@@ -5,4 +6,5 @@ export const PATHS = {
   DASHBOARD: '/dashboard',
   HISTORY: '/history',
   SETTINGS: '/settings',
+  DEVICE_FILES: '/device-files', // Added new path
 };

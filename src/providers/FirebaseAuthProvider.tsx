@@ -2,12 +2,12 @@
 'use client';
 
 import type { User } from 'firebase/auth';
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type AuthError } from 'firebase/auth';
+import { onAuthStateChanged, signOut as firebaseSignOut, type AuthError } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
-import { auth, googleProvider } from '@/lib/firebase';
+import { auth } from '@/lib/firebase'; // googleProvider is no longer needed here
 import { PATHS } from '@/lib/constants';
 
 interface FirebaseAuthProviderProps {
@@ -23,26 +23,13 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+      if (!currentUser && (window.location.pathname !== PATHS.LOGIN && window.location.pathname !== PATHS.SIGNUP && window.location.pathname !== PATHS.HOME)) {
+        // router.push(PATHS.LOGIN); // Commented out to avoid redirect loops on initial load if user is not logged in and not on public pages
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
-  const signInWithGoogle = async () => {
-    try {
-      setLoading(true);
-      await signInWithPopup(auth, googleProvider);
-      // Auth state change will be handled by onAuthStateChanged
-      // router.push(PATHS.DASHBOARD); // Consider if navigation should happen here or in page
-    } catch (error) {
-      const authError = error as AuthError;
-      console.error("Error signing in with Google:", authError);
-      console.error("Google Sign-In Error Code:", authError.code);
-      console.error("Google Sign-In Error Message:", authError.message);
-      // Handle error (e.g., show toast)
-    } finally {
-      // setLoading(false); // onAuthStateChanged will set loading to false
-    }
-  };
 
   const signOut = async () => {
     try {
@@ -62,7 +49,7 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

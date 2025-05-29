@@ -1,6 +1,7 @@
 
+
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth } from "firebase/auth"; // Removed GoogleAuthProvider
 // import { getFirestore } from "firebase/firestore"; // Include if Firestore is needed
 
 const firebaseConfig = {
@@ -13,13 +14,13 @@ const firebaseConfig = {
 };
 
 // --- BEGIN DIAGNOSTIC LOGGING ---
-console.log("--- Firebase Configuration Attempting to Load ---");
-console.log("API Key (NEXT_PUBLIC_FIREBASE_API_KEY):", firebaseConfig.apiKey);
-console.log("Auth Domain (NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN):", firebaseConfig.authDomain);
-console.log("Project ID (NEXT_PUBLIC_FIREBASE_PROJECT_ID):", firebaseConfig.projectId);
-console.log("Storage Bucket (NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET):", firebaseConfig.storageBucket);
-console.log("Messaging Sender ID (NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID):", firebaseConfig.messagingSenderId);
-console.log("App ID (NEXT_PUBLIC_FIREBASE_APP_ID):", firebaseConfig.appId);
+// console.log("--- Firebase Configuration Attempting to Load ---");
+// console.log("API Key (NEXT_PUBLIC_FIREBASE_API_KEY):", firebaseConfig.apiKey);
+// console.log("Auth Domain (NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN):", firebaseConfig.authDomain);
+// console.log("Project ID (NEXT_PUBLIC_FIREBASE_PROJECT_ID):", firebaseConfig.projectId);
+// console.log("Storage Bucket (NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET):", firebaseConfig.storageBucket);
+// console.log("Messaging Sender ID (NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID):", firebaseConfig.messagingSenderId);
+// console.log("App ID (NEXT_PUBLIC_FIREBASE_APP_ID):", firebaseConfig.appId);
 
 if (!firebaseConfig.apiKey) {
   console.error(
@@ -30,15 +31,15 @@ if (!firebaseConfig.apiKey) {
     "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   );
 }
-if (!firebaseConfig.authDomain) {
-  console.warn("WARNING: Firebase Auth Domain (NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) appears to be missing or undefined.");
-}
-if (!firebaseConfig.projectId) {
-  console.warn("WARNING: Firebase Project ID (NEXT_PUBLIC_FIREBASE_PROJECT_ID) appears to be missing or undefined.");
-}
-console.log("-------------------------------------------------");
-console.log("ACTION REQUIRED: Please CAREFULLY COMPARE the 'Project ID' and 'Auth Domain' logged above with the values in your Firebase project settings (Project settings > General > Your apps > Web app > SDK setup and configuration). They MUST match EXACTLY. Also, ensure 'localhost' is listed under Authentication > Sign-in method > Authorized domains for THIS specific project.");
-console.log("-------------------------------------------------");
+// if (!firebaseConfig.authDomain) {
+//   console.warn("WARNING: Firebase Auth Domain (NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) appears to be missing or undefined.");
+// }
+// if (!firebaseConfig.projectId) {
+//   console.warn("WARNING: Firebase Project ID (NEXT_PUBLIC_FIREBASE_PROJECT_ID) appears to be missing or undefined.");
+// }
+// console.log("-------------------------------------------------");
+// console.log("ACTION REQUIRED: Please CAREFULLY COMPARE the 'Project ID' and 'Auth Domain' logged above with the values in your Firebase project settings (Project settings > General > Your apps > Web app > SDK setup and configuration). They MUST match EXACTLY. Also, ensure 'localhost' is listed under Authentication > Sign-in method > Authorized domains for THIS specific project.");
+// console.log("-------------------------------------------------");
 // --- END DIAGNOSTIC LOGGING ---
 
 // Initialize Firebase
@@ -50,7 +51,6 @@ if (!getApps().length) {
 }
 
 const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
 // const db = getFirestore(app); // Include if Firestore is needed
 
-export { app, auth, googleProvider /*, db */ };
+export { app, auth /*, db */ }; // googleProvider removed from exports

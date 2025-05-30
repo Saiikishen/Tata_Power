@@ -1,3 +1,4 @@
+
 'use client';
 
 import AppShell from '@/components/layout/AppShell';
@@ -8,6 +9,12 @@ import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type TimeRange = 'hour' | 'today' | 'week';
 
@@ -54,16 +61,16 @@ const dataTypes: Array<{ key: keyof Omit<HistoricalDataPoint, 'time'>; label: st
   { key: 'temperature', label: 'Temperature' },
 ];
 
+const timeRangeDetails: Record<TimeRange, { label: string; description: string }> = {
+  hour: { label: "Last Hour", description: "Shows data from the last 60 minutes." },
+  today: { label: "Today", description: "Shows data from midnight until now." },
+  week: { label: "Last 7 Days", description: "Shows data from the past week." }
+};
+
 export default function HistoryPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>('today');
 
   const historicalData = useMemo(() => generateMockData(timeRange), [timeRange]);
-
-  const timeRangeLabels: Record<TimeRange, string> = {
-    hour: "Last Hour",
-    today: "Today",
-    week: "Last 7 Days"
-  };
 
   return (
     <AppShell>
@@ -71,18 +78,26 @@ export default function HistoryPage() {
         title="Historical Data"
         description="Analyze past performance of your solar system."
       >
-        <div className="flex gap-2">
-          {(['hour', 'today', 'week'] as TimeRange[]).map((range) => (
-            <Button
-              key={range}
-              variant={timeRange === range ? 'default' : 'outline'}
-              onClick={() => setTimeRange(range)}
-              className="capitalize"
-            >
-              {timeRangeLabels[range]}
-            </Button>
-          ))}
-        </div>
+        <TooltipProvider>
+          <div className="flex gap-2">
+            {(Object.keys(timeRangeDetails) as TimeRange[]).map((range) => (
+              <Tooltip key={range}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={timeRange === range ? 'default' : 'outline'}
+                    onClick={() => setTimeRange(range)}
+                    className="capitalize"
+                  >
+                    {timeRangeDetails[range].label}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{timeRangeDetails[range].description}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+        </TooltipProvider>
       </PageHeader>
 
       <Tabs defaultValue="power" className="w-full">
@@ -95,10 +110,10 @@ export default function HistoryPage() {
           <TabsContent key={dt.key} value={dt.key}>
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl">{dt.label} - {timeRangeLabels[timeRange]}</CardTitle>
+                <CardTitle className="text-xl">{dt.label} - {timeRangeDetails[timeRange].label}</CardTitle>
               </CardHeader>
               <CardContent>
-                <HistoricalChart data={historicalData} dataType={dt.key} timeRangeLabel={timeRangeLabels[timeRange]} />
+                <HistoricalChart data={historicalData} dataType={dt.key} timeRangeLabel={timeRangeDetails[timeRange].label} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -107,3 +122,4 @@ export default function HistoryPage() {
     </AppShell>
   );
 }
+

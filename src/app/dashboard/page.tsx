@@ -47,7 +47,7 @@ export default function DashboardPage() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         // Update metricsData based on the new data, keeping labels, units, icons
-        setMetricsData(prevMetrics => 
+        setMetricsData(prevMetrics =>
           prevMetrics.map(metric => ({
             ...metric,
             value: data[metric.id] !== undefined ? data[metric.id] : metric.value, // Use new value or keep old/default
@@ -71,7 +71,7 @@ export default function DashboardPage() {
   if (authLoading || loadingMetrics) {
     return (
       <AppShell>
-        <PageHeader 
+        <PageHeader
           title="Real-Time Dashboard"
           description="Loading current performance metrics..."
         />
@@ -85,7 +85,7 @@ export default function DashboardPage() {
   if (!user) {
     return (
       <AppShell>
-        <PageHeader 
+        <PageHeader
           title="Real-Time Dashboard"
           description="Please log in to view live metrics."
         />
@@ -102,7 +102,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <PageHeader 
+      <PageHeader
         title="Real-Time Dashboard"
         description="Current performance metrics from your solar panels."
       />
@@ -123,11 +123,11 @@ export default function DashboardPage() {
       <div className="mt-8 p-6 bg-card rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-foreground mb-3">System Status</h2>
         <p className="text-muted-foreground">
-          {error ? "System status may be affected by data errors." : 
+          {error ? "System status may be affected by data errors." :
            "All systems are currently operational. Your solar array is generating power optimally based on current weather conditions."
           }
         </p>
-         <div className={`mt-4 h-2 w-full ${error ? 'bg-yellow-500' : 'bg-green-500'} rounded-full`} 
+         <div className={`mt-4 h-2 w-full ${error ? 'bg-yellow-500' : 'bg-green-500'} rounded-full`}
               title={error ? "System Status Warning" : "System Optimal"}>
          </div>
       </div>

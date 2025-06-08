@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -51,13 +52,13 @@ export default function HomePage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="aspect-video w-full overflow-hidden rounded-lg">
-            <Image 
-              src="https://placehold.co/600x338.png" 
-              alt="Solar Panels" 
-              width={600} 
-              height={338} 
+            <Image
+              src="https://firebasestudio-hosting.web.app/images/gallery/Tata-Power/f7777a10-ac24-405c-b1d4-2b5321b98862.jpg"
+              alt="Solar technician inspecting panels"
+              width={600}
+              height={400} // Adjusted height to better match aspect ratio of new image
               className="object-cover"
-              data-ai-hint="solar panels"
+              data-ai-hint="solar technician"
               priority
             />
           </div>

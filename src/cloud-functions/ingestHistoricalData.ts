@@ -1,11 +1,12 @@
 
 'use strict';
 /**
- * @fileOverview Cloud Function to ingest historical sensor data from ESP32 devices.
+ * @fileOverview Cloud Function to ingest sensor data from ESP32 devices.
  *
  * This function provides an HTTPS endpoint that ESP32 devices can call to POST
- * their sensor readings. The readings are then stored as new documents in the
- * 'historicalMetrics' Firestore collection.
+ * their sensor readings. The readings are then:
+ * 1. Stored as new documents in the 'historicalMetrics' Firestore collection for logging.
+ * 2. Used to update the 'dashboardMetrics/current' document for real-time display.
  *
  * HTTP Method: POST
  * Expected JSON Payload:
@@ -19,8 +20,8 @@
  * }
  *
  * Successful Response:
- * Status: 201 Created
- * Body: { "status": "success", "message": "Data saved successfully", "docId": "firestore_document_id" }
+ * Status: 201 Created (for historical) and 200 OK (for dashboard update)
+ * Body: { "status": "success", "message": "Data saved successfully to historical log and dashboard updated", "historicalDocId": "firestore_document_id" }
  *
  * Error Responses:
  * Status: 400 Bad Request (e.g., missing required fields, invalid data types)
@@ -32,7 +33,6 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
 // Initialize Firebase Admin SDK if not already initialized.
-// This is typically done once at the top level of your functions/index.ts or similar.
 if (admin.apps.length === 0) {
   admin.initializeApp();
 }
@@ -76,8 +76,10 @@ export const ingestHistoricalData = functions.https.onRequest(async (req, res) =
       }
     }
 
-    const metricRecord: any = {
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+
+    const historicalRecord: any = {
+      timestamp: serverTimestamp,
       voltage: data.voltage,
       current: data.current,
       power: data.power,
@@ -86,16 +88,38 @@ export const ingestHistoricalData = functions.https.onRequest(async (req, res) =
     };
 
     if (data.deviceId && typeof data.deviceId === 'string') {
-      metricRecord.deviceId = data.deviceId;
+      historicalRecord.deviceId = data.deviceId;
     }
 
-    const docRef = await db.collection('historicalMetrics').add(metricRecord);
-    functions.logger.info(`Historical data saved for device: ${data.deviceId || 'N/A'}, docId: ${docRef.id}`, {structuredData: true});
-    res.status(201).json({ status: 'success', message: 'Data saved successfully', docId: docRef.id });
+    // 1. Write to historicalMetrics collection (new document for each reading)
+    const historicalDocRef = await db.collection('historicalMetrics').add(historicalRecord);
+    functions.logger.info(`Historical data saved for device: ${data.deviceId || 'N/A'}, docId: ${historicalDocRef.id}`, {structuredData: true});
+
+    // 2. Update/Overwrite dashboardMetrics/current document (for real-time dashboard)
+    const dashboardMetricsRef = db.doc('dashboardMetrics/current');
+    const dashboardData = {
+      voltage: data.voltage,
+      current: data.current,
+      power: data.power,
+      irradiance: data.irradiance,
+      temperature: data.temperature,
+      lastUpdatedAt: serverTimestamp, // Add a timestamp for when dashboard data was last updated
+    };
+     if (data.deviceId && typeof data.deviceId === 'string') {
+      (dashboardData as any).deviceId = data.deviceId;
+    }
+    
+    await dashboardMetricsRef.set(dashboardData, { merge: true }); // Use set with merge to create if not exists, or update
+    functions.logger.info(`Dashboard metrics updated for device: ${data.deviceId || 'N/A'}`, {structuredData: true});
+    
+    res.status(201).json({ 
+      status: 'success', 
+      message: 'Data saved successfully to historical log and dashboard updated.', 
+      historicalDocId: historicalDocRef.id 
+    });
 
   } catch (error) {
-    functions.logger.error('Error ingesting historical data:', error);
+    functions.logger.error('Error ingesting data:', error);
     res.status(500).json({ status: 'error', message: 'Internal Server Error. Could not save data.' });
   }
 });
-

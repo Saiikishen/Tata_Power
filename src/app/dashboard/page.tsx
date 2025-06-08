@@ -21,8 +21,6 @@ const initialMetricsSetup: Omit<Metric, 'value'>[] = [
   { id: 'power', label: 'Power', unit: 'W', icon: Bolt },
   { id: 'irradiance', label: 'Irradiance', unit: 'W/m²', icon: Sun },
   { id: 'temperature', label: 'Panel Temp.', unit: '°C', icon: Thermometer },
-  { id: 'vmp', label: 'Vmp (Max Power Voltage)', unit: 'V', icon: Zap },
-  { id: 'imp', label: 'Imp (Max Power Current)', unit: 'A', icon: Activity },
 ];
 
 // Helper to create the full Metric array with default values

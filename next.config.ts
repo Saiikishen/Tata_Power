@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -16,8 +17,19 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestudio-hosting.web.app',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
+  experimental: {
+    allowedDevOrigins: [
+      "https://6000-firebase-studio-1748533474989.cluster-73qgvk7hjjadkrjeyexca5ivva.cloudworkstations.dev"
+    ],
+  }
 };
 
 export default nextConfig;
